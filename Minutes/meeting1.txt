@@ -1,0 +1,21 @@
+Minutes for the meethign on the 23rd of october 2025
+2:27pm start to 3:23 end
+
+Notes:
+A mobile App is preferable
+Geofence boundaries shoul be built arount routines
+The project is built for those with early dementia who want to maintain a level of independance while keeping thier family/carers assured that thwy will not wander off and be in danger or get lost
+There is free choice as to which IoT device can be used however during ths meeting we were lended a rasperry Pi 
+A last known location feature for if connection between the IoT device and Mobile application is lost would be a good addition
+We should implement privacy and security into our work fro the start
+We should encrypt all transmissions for security
+We should go back and look at year 1 security standards - Specifically the failsafes and coding practices sections
+
+First MVP:
+Transmit a location from the IoT device to the Mobile app
+Second MVP idea (this one is not manditory and just an idea biefly discussed in the meeting):
+Log the IoT devices location multiple times per day and over the course of a week or so, this would create nodes that follow a routine. This routine can then be used to algorithmically create boundaries for the Geofence
+
+Milestone dates:
+Designs and planning made by the meeting on the 13th of november
+Have an MVP by christmans/earlier in december
