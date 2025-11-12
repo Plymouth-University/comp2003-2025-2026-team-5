@@ -1,0 +1,11 @@
+Useful links 
+
+https://learn.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-sdks  <- Azure IoT SDK which may be useful
+
+https://www.gov.uk/government/publications/the-caldicott-principles <- Caldicott principles RE: storage of patient data (NHS GDPR equivalent)
+
+https://azure.microsoft.com/en-us/products/azure-maps/?msockid=36a5f4bc2be56a012474e22b2a2b6b67 <- Azure maps
+
+https://learn.microsoft.com/en-us/azure/azure-maps/ <- Azure maps docs
+
+https://maker.pro/raspberry-pi/tutorial/how-to-use-a-gps-receiver-with-raspberry-pi-4 <- might be useful
