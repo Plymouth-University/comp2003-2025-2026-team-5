@@ -1,0 +1,32 @@
+start at 14:00 end at 15:00
+
+The meeting started with us showing all of the plans we had made so far
+
+secure every endpoint
+general response mechanism and encryption keys
+look into OWASP
+
+For next meeting:
+finish all plans and research
+start on mobile app development
+
+For tonight 
+send Hai the final list of modules to buy for the IoT device
+
+Think about different user profiles
+multiple carers with their own accounts looking over potentially multiple patients ect
+Different user role levels
+Microsoft entre
+
+Those with early dementia may want to configure themselves
+Some carers should be able to configure the devices for their patients
+
+We are moving over to the idea of using a server instead of transmitting directly 
+
+focus on developing it as a website and then expand that into a web-app if there is time
+
+have the features for the user to select areas as well as the algorithm routine
+
+Add a setting up a path button 
+
+think about the buttons more 
