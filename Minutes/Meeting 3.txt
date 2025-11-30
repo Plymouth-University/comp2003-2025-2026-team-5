@@ -1,0 +1,28 @@
+Meeting start: 14:14
+Meeting end:  14:57
+
+Some ideals will not be achievable but the goal is to do the best we can but not get stopped by non-core aspects not working ideally(e.g. battery life)
+
+This meeting included Chris who is doing a geofencing project for the final year of the course who gave a new insight 
+
+add cookies and policies to 
+
+nmea encryption
+
+for authentication look into entra id 
+creates and entry upn for each user when they log in
+full authentication is not currently possible on the free plan yet as it cannot be edited through code only the UI on the tenant instance
+Create a UPN vs access level table in the database
+
+$100 free for an azure account
+
+Azure has an MSSQL database for around £7 a month
+
+more documentation than a rented server
+
+
+The main thing that will be in common with Chris is the API layer and that will be one of the most important parts of the project as the raspberry pi is offloading the bulk of the processing to this layer.
+
+Hai has a college in HCI(human computer interaction) that she will ask about usability testing and if we need ethical approval for these tests.
+
+for the app, make the website stored in a container rather than a standalone app.
