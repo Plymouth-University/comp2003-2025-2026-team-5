@@ -1,0 +1,54 @@
+<!-- for any images ive used holders temp-->
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/complex_boundaries_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Complex Boundaries" />
+
+    <Button
+        android:id="@+id/simple_boundaries_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_conteAnt"
+        android:layout_toEndOf="@id/complex_boundaries_button"
+        android:layout_marginStart="16dp"
+        android:text="Simple Boundaries" />
+
+    <Switch
+        android:id="@+id/complex_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/complex_boundaries_button"
+        android:layout_marginTop="16dp"
+        android:text="Toggle Complex Boundaries" />
+
+    <EditText
+        android:id="@+id/immediate_contact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/complex_switch"
+        android:layout_marginTop="16dp"
+        android:hint="Immediate Contact" />
+
+    <EditText
+        android:id="@+id/secondary_contact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/immediate_contact"
+        android:layout_marginTop="16dp"
+        android:hint="Secondary Contact" />
+
+    <Switch
+        android:id="@+id/ai_mode_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/secondary_contact"
+        android:layout_marginTop="16dp"
+        android:text="AI Mode" />
+
+</RelativeLayout>
