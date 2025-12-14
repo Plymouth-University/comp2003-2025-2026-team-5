@@ -4,6 +4,7 @@ import socket
 import machine
 from machine import UART
 import time
+import ubinascii
 
 #define GPS variable, UART pins
 gps = machine.UART(1, baudrate=9600, tx=machine.Pin(4), rx=machine.Pin(5)) 
@@ -36,6 +37,32 @@ print(">> Attempting server connection")
 s.connect((Server_IP, Server_PORT))
 print(">> Connected:", Server_IP, Server_PORT)
 
+def encrypt_data(data):
+    
+    try:
+        
+        dataArray = []
+        
+        hex_data = ubinascii.hexlify(data)
+        
+        int key = 1765568736
+        
+        for i in range len(hex_data):
+            
+            dataArray[i] = hex_data[i]*key
+            
+        return dataArray
+    
+    except Exception as e:
+        
+        print("Encryption failed")
+        return None
+    
+        
+    
+        
+
+
 #loop for sending data
 while run == True:
         
@@ -43,13 +70,19 @@ while run == True:
         if gps.any():
             
             #reads data and stores in data variable
-            data = gps.readline()
+            gpsData = gps.readline()
             
-            #decodes the data to a readable format and removes spaces at the start of lines
-            sentence = data.decode('utf - 8').strip()
+            if gpsData:
+                
+                
             
-            #sends the data
-            s.send(i, sentence)
+                encrypted = encrypt_data(gpsData)
+                
+                #decodes the data to a readable format and removes spaces at the start of lines
+                #sentence = data.decode('utf - 8').strip()
+                
+                #sends the data
+                s.send(i, encrypted)
         
         else:
             
