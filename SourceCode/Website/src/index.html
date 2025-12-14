@@ -7,8 +7,103 @@
   <link href="./output.css" rel="stylesheet">
 </head>
 <body>
-  <h1 class="text-3xl font-bold underline">
-    Hello world!
-  </h1>
+  <body class="bg-gray-900 text-white font-sans">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-blue-700 p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold hover:text-red-600">Geofencing website</a>
+            
+            <!-- Large Screen Navigation -->
+            <ul class="hidden space-x-6 lg:flex" id="bignav">
+                <li><a href="pairing.html" class="text-lg font-bold hover:text-red-600">Pairing</a></li>
+                <li><a href="alerts.html" class="text-lg font-bold hover:text-red-600">Alerts</a></li>
+                <li><a href="settings.html" class="text-lg font-bold hover:text-red-600">Settings</a></li>
+            </ul>
+            
+            <div class="relative inline-block text-left lg:hidden">
+                <button type="button" class="inline-flex w-full justify-center rounded-md bg-blue-700 px-3 py-2 font-semibold text-white text-3xl hover:bg-blue-500" id="menu-button" aria-expanded="true" aria-haspopup="true">
+                    ☰
+                </button>
+    
+                <!-- Dropdown menu, show/hide based on menu state -->
+                <div class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1" style="display: none;">
+                    <a href="pairing.html" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-0">Pairing</a>
+                    <a href="alerts.html" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-1">Alerts</a>
+                    <a href="settings.html" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-2">Settings</a>
+                    <a href="sign_in_page.html" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-2">Sign In</a>
+                </div>
+            </div>
+            
+            <div class="hidden flex items-center lg:flex" id="bignav">
+                <a href="sign_in_page.html" class="mr-4 text-lg font-bold hover:text-red-600">Sign In</a>
+            </div>
+        </div>
+    </nav>
+    
+    <script>
+        const menuButton = document.getElementById("menu-button");
+        const dropdownMenu = document.querySelector('.absolute.right-0');
+    
+        menuButton.addEventListener('click', () => {
+            dropdownMenu.style.display = dropdownMenu.style.display === 'none' ? 'block' : 'none';
+        });
+    </script>
+
+    
+    <!-- This is the format block that can hold and stack a multitude of alerts -->
+    <div class="container mx-auto text-center p-18">
+      <div id="alertsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+
+
+        <!-- a card to preview the alert and link the user to the full alert -->
+        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md">
+          <img src="images/placeholder-map.jpg" class="w-full h-60 sm:h-44 object-cover">
+          <div class="p-4">
+              <h3 class="text-xl font-semibold mb-2">[patient name] deviated from their routine route</h3>    
+              <p class="text-gray-300">12/12/25 14:35</p>
+              <a href="alert.html#thisalert" class="block mt-4 bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-full text-lg font-semibold transition duration-300 ease-in-out">Learn More</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <script>
+
+      const alerts = [
+      {
+        id: 1,
+        patientName: "patient name",
+        time: "12/12/25 14:35",
+        message: "deviated from their routine route",
+        lat: 50,
+        lng: 5,
+        mapImage: "images/placeholder-map.jpg"
+      },
+      ];
+
+      const grid = document.getElementById("alertsGrid");
+
+      alerts.forEach(alert => {
+        grid.innerHTML += `
+          <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md">
+            <img src="${alert.mapImage}" class="w-full h-60 sm:h-44 object-cover">
+            <div class="p-4">
+              <h3 class="text-xl font-semibold mb-2">
+                ${alert.patientName} ${alert.message}
+              </h3>
+              <p class="text-gray-300">${alert.time}</p>
+              <a href="alert.html?id=${alert.id}"
+                class="block mt-4 bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-full text-lg font-semibold">
+                Learn More
+              </a>
+            </div>
+          </div>
+        `;
+      }); 
+    </script>
+
+
 </body>
 </html>
