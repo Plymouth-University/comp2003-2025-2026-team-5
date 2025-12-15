@@ -14,10 +14,10 @@ run = True
 
 
 #network credentials
-SSID = "" #obscured for GitHub upload
-Password = ""
+SSID = "TP-Link_DCA4" #obscured for GitHub upload
+Password = "11276630"
 
-Server_IP = "" 
+Server_IP = "86.8.24.189" 
 Server_PORT = 5000
 
 #connects to provided wifi network
