@@ -1,0 +1,25 @@
+start: 12:15, end:  12:49
+
+we showed Hai the current state of our mvp prototype
+
+add colourblind options in the settings
+high contrast mode
+large text mode
+add a geofencing tab to the navbar
+
+
+
+we should apply for ethics anyway for later usability testing
+
+if we test with people with dementia, then we need the approval of the tester and their carer
+
+create the questions that we want to ask ahead of time for the ethics application
+analyse the methods of usability testing and things like right to leave the testing and what exact information we need to collect
+
+
+Hai has been told about the replacement gsm module
+
+Email Hai about the task assignment between members
+
+Hai will email the next meeting time during next semester.
+
