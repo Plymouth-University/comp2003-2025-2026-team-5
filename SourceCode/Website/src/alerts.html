@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="./output.css" rel="stylesheet">
 </head>
-  <body class="bg-gray-100 dark:bg-gray-900 text-black font-sans">
+  <body class="bg-gray-100 dark:bg-gray-900 text-white font-sans">
 
     <!-- Navigation Bar -->
     <nav class="bg-blue-700 p-4">
@@ -100,7 +100,7 @@
 
         alerts.forEach(alert => {
           grid.innerHTML += `
-            <div class="bg-gray-500 dark:bg-gray-800 rounded-lg overflow-hidden shadow-md">
+            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md">
               <img src="${alert.mapImage}" class="w-full h-60 sm:h-44 object-cover">
               <div class="p-4">
                 <h3 class="text-xl font-semibold mb-2">
@@ -125,7 +125,7 @@
         const thisAlert = alerts.find(a => a.id === alertId);
         const detail = document.getElementById("alertsDetail");
           detail.innerHTML = `
-            <div class="bg-gray-500 dark:bg-gray-800 rounded-lg overflow-hidden shadow-md">
+            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md">
               <div> <!-- blank div for the image to center itself inside of -->
                 <img src="${thisAlert.mapImage}" class="w-full max-h-140 max-w-300 object-cover mx-auto">
               </div>
