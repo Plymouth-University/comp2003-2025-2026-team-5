@@ -100,15 +100,15 @@
 
         alerts.forEach(alert => {
           grid.innerHTML += `
-            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md">
+            <div class="bg-gray-300 dark:bg-gray-800 rounded-lg overflow-hidden shadow-md">
               <img src="${alert.mapImage}" class="w-full h-60 sm:h-44 object-cover">
               <div class="p-4">
-                <h3 class="text-xl font-semibold mb-2">
+                <h3 class="text-black dark:text-white text-xl font-semibold mb-2">
                   ${alert.patientName} ${alert.message}
                 </h3>
-                <p class="text-gray-300">${alert.time}</p>
+                <p class="text-black dark:text-gray-300">${alert.time}</p>
                 <a href="alerts.html?id=${alert.id}"
-                  class="block mt-4 bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-full text-lg font-semibold">
+                  class="block mt-4 bg-sky-950 dark:bg-amber-600 hover:bg-sky-950 dark:bg-amber-500 text-white px-4 py-2 rounded-full text-lg font-semibold">
                   Learn More
                 </a>
               </div>
@@ -125,7 +125,7 @@
         const thisAlert = alerts.find(a => a.id === alertId);
         const detail = document.getElementById("alertsDetail");
           detail.innerHTML = `
-            <div class="bg-gray-800 rounded-lg overflow-hidden shadow-md">
+            <div class="bg-gray-300 dark:bg-gray-800 rounded-lg overflow-hidden shadow-md">
               <div> <!-- blank div for the image to center itself inside of -->
                 <img src="${thisAlert.mapImage}" class="w-full max-h-140 max-w-300 object-cover mx-auto">
               </div>
@@ -133,10 +133,10 @@
                 <h3 class="text-xl font-semibold mb-2">
                   ${thisAlert.patientName} ${thisAlert.message} 
                 </h3>
-                <p class="text-gray-300">${thisAlert.time}</p>
+                <p class="text-black dark:text-gray-300">${thisAlert.time}</p>
                 
                 <!-- this should be expanded on later in development, it should label the alert as archived, NOT deleting it but instead just marking it to be shown elsewhere -->
-                <a href=""class="block mt-4 bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-full text-lg font-semibold w-36">
+                <a href=""class="block mt-4 bg-sky-950 dark:bg-amber-600 hover:bg-sky-950 dark:bg-amber-500 text-white px-4 py-2 rounded-full text-lg font-semibold w-36">
                   Dismiss alert
                 </a>
               </div>
