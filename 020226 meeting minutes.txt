@@ -1,0 +1,11 @@
+02/02/26 meeting minutes
+this is a group meeting between team members only
+
+we discussed server plans and our options for hosting it
+how we can plan the database and the earlier proposed plan
+there was a lot of discussion about the IoT module and how we have two different cellular modules so can do comparative testing between the devices
+We have discussed balancing our work and how we can improve this in the future
+A minimum number of commits and a plan on how we can commit was discussed
+
+we will be using an MSSQL database
+
