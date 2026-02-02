@@ -1,0 +1,158 @@
+<!--  -->
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="./output.css" rel="stylesheet">
+  <script>
+    // this is code directly from the tailwind documentation: https://tailwindcss.com/docs/dark-mode
+    // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+
+    if (
+        localStorage.theme === "dark" ||
+        (!("theme" in localStorage) &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+        document.documentElement.classList.add("dark");
+    } else {
+        document.documentElement.classList.remove("dark");
+    }
+  </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-white font-sans">
+
+  <!-- Navigation Bar -->
+  <nav class="bg-blue-700 p-4">
+      <div class="container mx-auto flex justify-between items-center">
+          <a href="#" class="text-2xl font-bold hover:text-blue-200">Geofencing website</a>
+          
+          <!-- Large Screen Navigation -->
+          <ul class="hidden space-x-6 lg:flex" id="bignav">
+              <li><a href="pairing.html" class="text-lg font-bold hover:text-blue-200">Pairing</a></li>
+              <li><a href="alerts.html" class="text-lg font-bold hover:text-blue-200">Alerts</a></li>
+              <li><a href="settings.html" class="text-lg font-bold hover:text-blue-200">Settings</a></li>
+              <li><a href="geofence.html" class="text-lg font-bold hover:text-blue-200">Set up Geofence</a></li>
+          </ul>
+          
+          <div class="relative inline-block text-left lg:hidden">
+              <button type="button" class="inline-flex w-full justify-center rounded-md bg-blue-700 px-3 py-2 font-semibold text-white text-3xl hover:bg-blue-200" id="menu-button" aria-expanded="true" aria-haspopup="true">
+                  ☰
+              </button>
+  
+              <!-- Dropdown menu, show/hide based on menu state -->
+              <div class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1" style="display: none;">
+                  <a href="pairing.html" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-0">Pairing</a>
+                  <a href="alerts.html" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-1">Alerts</a>
+                  <a href="settings.html" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-2">Settings</a>
+                  <a href="geofence.html" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-2">Set up geofence</a>
+                  <a href="sign_in_page.html" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-2">Sign In</a>
+              </div>
+          </div>
+          
+          <div class="hidden flex items-center lg:flex" id="bignav">
+              <a href="sign_in_page.html" class="mr-4 text-lg font-bold hover:text-blue-200">Sign In</a>
+          </div>
+      </div>
+  </nav>
+  
+  <script>
+      const menuButton = document.getElementById("menu-button");
+      const dropdownMenu = document.querySelector('.absolute.right-0');
+  
+      menuButton.addEventListener('click', () => {
+          dropdownMenu.style.display = dropdownMenu.style.display === 'none' ? 'block' : 'none';
+      });
+  </script>
+
+  <main id="app"></main>
+
+
+  <script>
+    const app = document.getElementById("app");
+      // there MUST be security for this section so that a carer can only see alerts for the patients that they care for
+      const alerts = [
+    {
+      id: 1,
+      patientName: "[patient name]",
+      time: "12/12/25 14:35",
+      message: "deviated from their routine route",
+      lat: 50,
+      lng: 5,
+      mapImage: "images/placeholder-map.jpg"
+    },
+    {
+      id: 2,
+      patientName: "[patient name]",
+      time: "10/10/25 16:57",
+      message: "added a new route to their routine",
+      lat: 51,
+      lng: 6,
+      mapImage: "images/placeholder-map.jpg"
+    }
+    ];
+
+    // this query parsing is the code block I developed using AI to produce a plan as to how I can achieve this.
+    const queryString = window.location.search;
+    const params = new URLSearchParams(queryString);
+    const id = params.get("id");
+    if (!id){
+      app.innerHTML += `
+        <!-- This is the format block that can hold and stack a multitude of alerts -->
+        <div class="container mx-auto text-center p-18">
+          <div id="alertsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          </div>
+        </div>
+        `;
+    
+
+      const grid = document.getElementById("alertsGrid");
+
+      alerts.forEach(alert => {
+        grid.innerHTML += `
+          <div class="bg-gray-400 dark:bg-gray-800 rounded-lg overflow-hidden shadow-md">
+            <img src="${alert.mapImage}" class="w-full h-60 sm:h-44 object-cover">
+            <div class="p-4">
+              <h3 class="text-xl font-semibold mb-2">
+                ${alert.patientName} ${alert.message}
+              </h3>
+              <p class="text-gray-800 dark:text-gray-300">${alert.time}</p>
+              <a href="alerts.html?id=${alert.id}"
+                class="block mt-4 bg-sky-800 hover:bg-sky-700 dark:bg-amber-600 dark:hover:bg-amber-500 text-black dark:text-white px-4 py-2 rounded-full text-lg font-semibold">
+                Learn More
+              </a>
+            </div>
+          </div>
+        `;
+      }); 
+    } else{
+    app.innerHTML += `
+    <div class="container mx-auto text-center sm:px-18 px-4 py-2">
+      <div id="alertsDetail"></div>
+    </div>
+    `;
+      const alertId = Number(id);
+      const thisAlert = alerts.find(a => a.id === alertId);
+      const detail = document.getElementById("alertsDetail");
+        detail.innerHTML = `
+          <div class="bg-gray-400 dark:bg-gray-800 rounded-lg overflow-hidden shadow-md">
+            <div> <!-- blank div for the image to center itself inside of -->
+              <img src="${thisAlert.mapImage}" class="w-full max-h-140 max-w-300 object-cover mx-auto">
+            </div>
+            <div class="p-4">
+              <h3 class="text-black text-xl font-semibold mb-2">
+                ${thisAlert.patientName} ${thisAlert.message} 
+              </h3>
+              <p class="text-gray-300">${thisAlert.time}</p>
+              
+              <!-- this should be expanded on later in development, it should label the alert as archived, NOT deleting it but instead just marking it to be shown elsewhere -->
+              <a href=""class="block mt-4 dark:bg-amber-600 dark:hover:bg-amber-500 bg-sky-800 hover:bg-sky-700 text-white px-4 py-2 rounded-full text-lg font-semibold w-36">
+                Dismiss alert
+              </a>
+            </div>
+          </div>
+        `; 
+    }
+    </script>
+</body>
+</html>

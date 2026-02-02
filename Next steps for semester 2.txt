@@ -1,0 +1,11 @@
+Next steps for semester 2
+
+We will be implementing a minimum commits per sprint of 3 
+this does not limit any team member but will help with commit balancing for our sprint reviews
+We will aim to each complete at least one file of IoT code so that we all have experience with this, ideally the timeslot on Thursday after our client meeting is ideal for this as we can discuss it in the group and learn from Noah as he has the most experience
+I will create a sitemap for the website that other members can refer to and use to help with website development. It would be valuable to have a resource like this for each of the sections of the project(website, cyber, server and IoT device) the testing plan is already completed.
+This semester will be more focused on programming and documentation on our development process rather than planning, however, this is still needed, as stated in the above sentence.
+We will remember to write about our minimal AI usage initiative in our documentation and submissions as we made an oversight and forgot to do this in our interim submission.
+Further discussion about how exactly we want to carry out acceptance and user testing is required, these tests should refer back to any user stories and KPIs that we previously created or have since been brought up in meetings.
+We can discuss how we will test the 2 different cellular modules as this will be an interesting comparison.
+Learn version control.
