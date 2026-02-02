@@ -9,3 +9,4 @@ A minimum number of commits and a plan on how we can commit was discussed
 
 we will be using an MSSQL database
 
+
