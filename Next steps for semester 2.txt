@@ -9,3 +9,5 @@ We will remember to write about our minimal AI usage initiative in our documenta
 Further discussion about how exactly we want to carry out acceptance and user testing is required, these tests should refer back to any user stories and KPIs that we previously created or have since been brought up in meetings.
 We can discuss how we will test the 2 different cellular modules as this will be an interesting comparison.
 Learn version control.
+We agreed that going into the new year we will meet with the client first to lay out further requirements before recommending work on the project.
+
