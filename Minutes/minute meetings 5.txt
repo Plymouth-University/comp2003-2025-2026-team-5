@@ -1,0 +1,22 @@
+Meeting 5, 01,02,2026
+11:30 start, 12:18 end
+
+We started by talking about the IoT device as we have now received a new gsm module
+We discussed risk management for the different battery options
+
+We will need to contact the university for ethics considerations for our usability acceptance tests (UAT)
+
+We should use the simplest geofencing option early on and move to more advanced systems later
+
+look into if cloudflare or any alternatives send sms for the last known location feature
+
+Prioritise the website over the IoT device as this is just a proof of concept
+
+We discussed the server and database plans and how a geofence table will be required for the geofence for each patient
+
+We discussed the website and how important security will be especially for the website where it must be a priority
+
+Make sure to finalise the database schema with Hai before implementing it
+
+
+
