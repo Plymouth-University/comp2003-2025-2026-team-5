@@ -20,7 +20,7 @@ while run == True:
     i = i+1
     
     #request firmware version and device status
-    gsm.write(b'ATI\r\n')
+    gsm.write(b'AT+CCID\r\n')
     
     #store output in data variable
     data = gsm.read()
