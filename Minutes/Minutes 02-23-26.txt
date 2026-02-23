@@ -1,0 +1,14 @@
+Login system - Use existing framework (Node.js) 
+Use Microsoft for login for Multi-factor  Authenticator 
+Single-Site Login
+Raised point on security: SQL injections, website being an attack surface
+Logging into the database server independent of the website
+Haydyn: Application/Web Development: First a website then web app
+Database: Dr Hai-Van raises suggestion -> admin role
+How to connect carers and patients: The patients and carers amongst themselves can connect themselves but the admin and patients alone can remove or redo their connection. 
+There should be an admin page.
+Patients or carers can draw geofence.
+Core flow: Working website with device properly tracked.
+Noah: Got the device working for periods of time, power supply doesn’t adapt well to current capacitor.
+Testing: Almost ready for basic testing (e.g unit testing) but can’t go to sites because of bad weather.
+Usability testing: JiSc Online Surveys
