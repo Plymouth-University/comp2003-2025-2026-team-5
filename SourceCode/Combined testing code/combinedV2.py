@@ -1,19 +1,31 @@
-#imports
+#==============IMPORTS==============#
 import machine
 from machine import UART
 import time
 
-#module connnections
+#==============MODULE CONNECTIONS==============#
 gsm = machine.UART(0, baudrate=9600, tx=machine.Pin(0), rx=machine.Pin(1)) 
-gps = machine.UART(1, baudrate=9600, tx=machine.Pin(4), rx=machine.Pin(5)) 
+gps = machine.UART(1, baudrate=9600, tx=machine.Pin(4), rx=machine.Pin(5))
 
-#classes
-class HardwareError(Exception):
+#==============CLASSES==============#
+
+#custom error class for hardware problems
+class HardwareError(exception):
     pass
 
-#functions
+#for issues sending data
+class TransmissionError(exception):
+    pass
 
-#status check for GSM unit before proceeding
+#==============VARIABLES==============#
+
+serverIP = ''
+serverPORT = ''
+
+#==============FUNCTIONS==============#
+
+#function to initialise the GSM module before configuring
+#it for SMS and TCP/IP transmissions
 def initialiseGSM(gsm):
     
     #only true if each step completes successfully
@@ -158,36 +170,183 @@ def initialiseGSM(gsm):
             
             return True
 
-#GPS provides no status check, only data
-def getCoords():
+#gps module initialisation
+def initialiseGPS(gps):
     
-    try:
+    #avoid initialising multiple times and wasting resources
+    success = False
+    
+    for attempt in range(5):
         
-        line = gps.readline()
-        
-        if line:
+        if success == False:
             
-            try:
-                
-                text = line.decode('ascii').strip()
-                print("GPS:", text)
-                
-                return line
-                
-            except Exception as e:
-                
-                print("Error Decoding GPS data:", e)
-                
-                raise HardwareError("Error decoding GPS data")
-        
-        if !line:
+            time.sleep(1)
             
-            raise HardwareError("GPS Unit Not Responding")
+            #response
+            if gps.any():
+                
+                data = gps.readline()
+                data = data.decode('utf-8','ignore')
+                data = data.strip()
+                
+                #TODO: change this later
+                #this is not a good check
+                
+                #GNGGA header present
+                if "$GNGGA" in data:
+                    
+                    #quit out of loop
+                    print("GPS module initialised")
+                    success = True                    
+                    return True
     
-    except HardwareError as e:
+    #no response
+    if success == False:
         
-        print("GPS unit error: ", e)
-    
+        raise HardwareError("GPS module not responding")
+        
+        return False
 
+#function to send data
+#GSM module should be pre-configured as this function will only
+#be called by the functions which configure the GSM mode
+def send(data, state):
+    
+    success = False
+    
+    #just in case no state is provided
+    if state != True or state != False:
+        
+        raise TransmissionError("Must configure transmission mode before transmission can take place")
+    
+    
+    #TCP/IP 
+    if state == True:
+        
+        #TODO: add code for TCP/IP transmission
+        
+        success = True
+        return True
+    
+    #SMS
+    else if state == False:
+        
+        #TODO: add code for SMS transmission
+        
+        success = True
+        return True
+    
+    #data cannot be sent
+    if success == False:
+        
+        return False
+    
+    
+#function to configure GSM module for SMS transmissions
+def transmitSMS(gps, gsm):
+    
+    #variables to store GPS and GSM responses
+    GPSdata = ''
+    GSMdata = ''
+    
+    
+    
+    #check for response from GPS unit before configuring
+    if gps.any():
+        
+        GPSdata = gps.readline()
+        GPSdata = GPSdata.decode('utf-8','ignore')
+        GPSdata = GPSdata.strip()
+        
+        send(GPSdata, False)
+        
+
+#function to configure the GSM module for TCP/IP transmissions
+def transmitTCP(gps, gsm):
+    
+    #variables to store GPS and GSM responses
+    GPSdata = ''
+    GSMdata = ''
+    
+    #check variable, avoids multiple reconnections
+    cipstart = False
+    
+    if cipstart == False:
+        
+        for attempt in range(5):
+            
+            #TODO: figure out a way of running env variables in micropython
+            
+            #starts TCP connection to defined ip using defined port
+            gsm.write(b'AT+CIPSTART="TCP","{serverIP}","{serverPORT}",\r\n')
+            
+            #debug
+            print(attempt, "initialising connection to", serverIP, serverPORT)
+            
+            #wait for response
+            time.sleep(1.0)
+            
+            #read response
+            response = gsm.readline()
+            
+            print(response)
+            
+            #connection initiated
+            if "CONNECT" in response and "OK" in response:
+                
+                #prevent reconnection attempts
+                cipstart = True
+                
+                print("Connnected to: ", serverIP, serverPORT)
+                
+            #sleep and then try again
+            if cipstart == False:
+                
+                time.sleep(1.0)
+                
+                print("Connection attempt failed, retrying")
+    
+    #only check GPS if TCP/IP connection is successful
+    while cipstart == True:
+        
+        #check for GPS response
+        if gps.any():
+                
+            GPSdata = gps.readline()
+            GPSdata = GPSdata.decode('utf-8','ignore')
+            GPSdata = GPSdata.strip()
+            
+            #only send data containing valid positional header
+            if "$GNGGA" in GPSdata:
+            
+                gsm.write(b'AT+CIPSEND\r\n') #open transmission
+                
+                time.sleep(0.1) #wait for response
+                
+                gsm.write(GPSdata) #write GPS data
+                
+                #debug
+                print("Sending", GPSdata, "to", serverIP, serverPORT)
+                
+                gsm.write("0x1a") #end of transmission
+                
+                time.sleep(0.2)
+                
+                response = gsm.readline()
+                
+                if "OK" not in response:
+                    
+                    raise transmissionError("Server not responding")
+                
+        else:
+            
+            #wait for response from GPS module as it can take a moment
+            time.sleep(0.2)
+    
+    #throw error if connection still not initialised
+    if cipstart == False:
+         
+        raise TransmissionError("Could not initiate TCP connection")
+    
 
 #main loop
