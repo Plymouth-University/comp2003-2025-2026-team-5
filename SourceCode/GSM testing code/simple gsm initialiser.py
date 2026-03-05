@@ -50,22 +50,23 @@ def send(command, delay):
     print("\n" , text)
     print("-----------------------------")
 
-
+#sets sms text mode
 def text_mode():
     
     send("AT+CMGF=1", 2)
-    
+
+#function for sending text messages
 def send_message(number, message):
     
-    
+    #sets phone number (must use country codes e.g. +44)
     send(f'AT+CMGS="{number}"', 2)
     
+    #writes the message passed to the function
     gsm.write(message.encode())
     
-    
+    #writes ctrl+z to end writing
     gsm.write(bytes([26]))
     
-    
-    #wait_resp_info(5000) 
-    
+    #reads buffer for 5 seconds
+    send("",5)
 
