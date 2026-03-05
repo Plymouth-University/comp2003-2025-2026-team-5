@@ -1,156 +1,53 @@
-import machine
-
-#UART allows communication between Pico and modules
-from machine import UART
+#imports
+from machine import UART, Pin
 import time
 
 #connect to GSM module
-gsm = machine.UART(0, baudrate=9600, tx=machine.Pin(0), rx=machine.Pin(1)) 
+gsm = machine.UART(0, 115200) 
 
+pwr_en = 14
 
-#request SIM status
-gsm.write(b'AT+CPIN?\n')
+#toggle power
+def power_on_off():
+    pwr_key = machine.Pin(pwr_en, machine.Pin.OUT)
+    pwr_key.value(1)
+    time.sleep(2)
+    pwr_key.value(0)
+
+#function to send commands to the module
+def send(command, delay):
     
-time.sleep(5)
+    text = ''
+    data = b''
     
-#store output in data variable
-data = gsm.read()
-    
-#only runs if there is a return
-if data:
+    #send commands
+    gsm.write(command.encode() + b'\r\n')
         
-    #decode data and then strip headers
-    text = data.decode('utf-8', 'ignore')
-    data = text.strip()
+    time.sleep(delay)
     
-#for testing
-#helps to separate data
-print("-----------------------------")
-print("\n" , data)
-print("-----------------------------")
-    
-#leaves a gap between data 
-time.sleep(1.0)
-
-#switch to full functionality mode
-gsm.write(b'AT+CFUN=1\n')
-    
-time.sleep(5)
-    
-#store output in data variable
-data = gsm.read()
-    
-#only runs if there is a return
-if data:
+    #read entire buffer as data arrives
+    while gsm.any():
         
-    #decode data and then strip headers
-    text = data.decode('utf-8', 'ignore')
-    data = text.strip()
-    
-#for testing
-#helps to separate data
-print("-----------------------------")
-print("\n" , data)
-print("-----------------------------")
-    
-#leaves a gap between data 
-time.sleep(1.0)
-
-#check registration status
-gsm.write(b'AT+CREG=1\n')
-    
-time.sleep(5)
-    
-#store output in data variable
-data = gsm.read()
-    
-#only runs if there is a return
-if data:
+        part = gsm.read()
         
-    #decode data and then strip headers
-    text = data.decode('utf-8', 'ignore')
-    data = text.strip()
-    
-#for testing
-#helps to separate data
-print("-----------------------------")
-print("\n" , data)
-print("-----------------------------")
-    
-#leaves a gap between data 
-time.sleep(1.0)
-
-#automatic operator selection
-gsm.write(b'AT+COPS=0\n')
-    
-time.sleep(5)
-    
-#store output in data variable
-data = gsm.read()
-    
-#only runs if there is a return
-if data:
+        if part:
         
-    #decode data and then strip headers
-    text = data.decode('utf-8', 'ignore')
-    data = text.strip()
-    
-#for testing
-#helps to separate data
-print("-----------------------------")
-print("\n" , data)
-print("-----------------------------")
-    
-#leaves a gap between data 
-time.sleep(1.0)
-
-#signal strength
-gsm.write(b'AT+CSQ\n')
-    
-time.sleep(5)
-    
-#store output in data variable
-data = gsm.read()
-    
-#only runs if there is a return
-if data:
+            data += part
         
-    #decode data and then strip headers
-    text = data.decode('utf-8', 'ignore')
-    data = text.strip()
-    
-#for testing
-#helps to separate data
-print("-----------------------------")
-print("\n" , data)
-print("-----------------------------")
-    
-#leaves a gap between data 
-time.sleep(1.0)
-
-#check registration status
-gsm.write(b'AT+CREG?\n')
-    
-time.sleep(5)
-    
-#store output in data variable
-data = gsm.read()
-    
-#only runs if there is a return
-if data:
+        #pause for a moment
+        time.sleep(0.01)
         
-    #decode data and then strip headers
-    text = data.decode('utf-8', 'ignore')
-    data = text.strip()
-    
-#for testing
-#helps to separate data
-print("-----------------------------")
-print("\n" , data)
-print("-----------------------------")
-    
-#leaves a gap between data 
-time.sleep(1.0)
+    #only runs if there is a return
+    if data:
+            
+        #decode data and then strip headers
+        data = data.decode('utf-8', 'ignore')
+        text = data.strip()
+        
+    #helps to separate data
+    print("-----------------------------")
+    print("\n" , text)
+    print("-----------------------------")
 
 
 
