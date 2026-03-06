@@ -111,7 +111,10 @@ def tcp_send(message):
 #tcp connection close
 def tcp_close():
     
+    #close connection
     send("AT+CIPCLOSE", 2)
+    
+    #close bearer
     send("AT+SAPBR=0,1", 2)
 
 #captures coordinates and sends them to the server
