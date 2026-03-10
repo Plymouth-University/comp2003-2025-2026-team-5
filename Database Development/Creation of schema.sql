@@ -1,0 +1,1 @@
+CREATE SCHEMA geofence_v1;
