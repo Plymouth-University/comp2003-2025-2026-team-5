@@ -3,7 +3,7 @@ CREATE TABLE geofence_v1.carer(
     account_id UNIQUEIDENTIFIER NOT NULL,
     name VARCHAR(100) NOT NULL,
     
-    CONSTRAINT fk_account 
+    CONSTRAINT fk_account_carer 
     FOREIGN KEY(account_id)
     REFERENCES geofence_v1.account(account_id) ON DELETE CASCADE
 );
