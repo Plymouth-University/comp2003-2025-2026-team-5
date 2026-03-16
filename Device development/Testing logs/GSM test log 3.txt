@@ -1,0 +1,33 @@
+GSM test log 3
+
+First successful tranmsissions
+
+>>> %Run -c $EDITOR_CONTENT
+
+MPY: soft reboot
+>>> text_mode()
+-----------------------------
+
+ AT+CMGF=1
+OK
+-----------------------------
+>>> send_message("[REDACTED FOR PRIVACY]", "Test")
+-----------------------------
+
+ AT+CMGS="[REDACTED FOR PRIVACY]5"
+>
+-----------------------------
+>>> send_message("[REDACTED FOR PRIVACY]", "Test")
+-----------------------------
+
+ Test
++CMGS: 6
+
+OK
+AT+CMGS="[REDACTED FOR PRIVACY]"
+>
+-----------------------------
+>>> 
+
+AT+CMGF sets SMS mode, CMGS sets the number to send the message. They were
+sent and received successfully.

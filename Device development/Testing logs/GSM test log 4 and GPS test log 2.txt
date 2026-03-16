@@ -1,0 +1,195 @@
+GSM test log 4
+
+Testing TCP connection from the device to my laptop hosting a TCP client
+
+>>> send("AT",2)
+-----------------------------
+
+ AT
+OK
+-----------------------------
+>>> tcp_open()
+-----------------------------
+
+ AT+SAPBR=3,1,"Contype","GPRS"
+OK
+-----------------------------
+-----------------------------
+
+ AT+SAPBR=3,1,"APN","mobile.o2.co.uk"
+OK
+-----------------------------
+-----------------------------
+
+ AT+SAPBR=1,1
+OK
+-----------------------------
+-----------------------------
+
+ AT+SAPBR=2,1
++SAPBR: 1,1,"10.133.91.232"
+
+OK
+-----------------------------
+-----------------------------
+
+ AT+CIPMUX=0
+OK
+-----------------------------
+-----------------------------
+
+ AT+CIPSTART="TCP","[REDACTED FOR SECURITY REASONS]","5000"
+OK
+
+CONNECT OK
+-----------------------------
+>>> 
+
+VScode terminal output:
+
+PS C:\Users\noahm\Desktop\MVP Web Test> node server.js
+TCP listening on 5000
+HTTP server on 3000
+PS C:\Users\noahm\Desktop\MVP Web Test> node server.js
+TCP listening on 5000
+HTTP server on 3000
+Pico connected from ::ffff:82.132.235.92
+
+
+Now running the function to close the TCP connection:
+
+>>> tcp_close()
+-----------------------------
+
+ AT+CIPCLOSE
+CLOSE OK
+-----------------------------
+-----------------------------
+
+ AT+SAPBR=0,1
+OK
+-----------------------------
+>>> 
+
+VScode output:
+
+PS C:\Users\noahm\Desktop\MVP Web Test> node server.js
+TCP listening on 5000
+HTTP server on 3000
+PS C:\Users\noahm\Desktop\MVP Web Test> node server.js
+TCP listening on 5000
+HTTP server on 3000
+Pico connected from ::ffff:82.132.235.92
+Pico disconnected
+
+
+Both of these functions work as intended.
+
+Now to check GNSS coordinate retrieval:
+
+>>> power_on_off()
+>>> send("AT+CGNSPWR=1",2)
+-----------------------------
+
+ AT+CGNSPWR=1
+OK
+-----------------------------
+>>> send("AT+CGNSINF",2)
+-----------------------------
+
+ +CGNSPWR: 1
+AT+CGNSINF
++CGNSINF: 1,0,19800111144022.000,,,,0.00,0.0,0,,,,,,3,0,0,,41,,
+
+OK
+-----------------------------
+>>> send("AT+CGNSINF",2)
+-----------------------------
+
+ AT+CGNSINF
++CGNSINF: 1,0,20260306144102.000,,,,0.65,0.0,0,,,,,,3,0,1,,40,,
+
+OK
+-----------------------------
+>>> send("AT+CGNSINF",2)
+-----------------------------
+
+ AT+CGNSINF
++CGNSINF: 1,1,20260306144215.000,[REDACTED],[REDACTED],[REDACTED],80.1,1,,1.7,2.0,0.9,,10,4,3,,43,,
+
+OK
+-----------------------------
+>>> 
+
+My exact location has been redacted for the GitHub upload as it is my home address, however it is accurate within 
+~15 metres. My altitude has been redacted as well just in case due to my town's 
+
+When retrieving latitude and longitude, retrieve the response from the unit, split it by commands (data.split(','))
+and retrieve part [3] for latitude, [4] for longitude, and [5] for altitude.
+
+Sentence overview:
+
+[0]: GNSS run status (On or off)
+[1]: GNSS fix (1 for fix, 0 for no fix)
+[2]: UTC datetime
+[3]: Latitude
+[4]: Longitude
+[5]: Altitude
+
+Source: https://files.waveshare.com/upload/6/65/SIM868_Series_GNSS_Application_Note_V1.02.pdf? Page 11
+
+At 20260306144215.000 (06/03/2026, 14:14:15:00) it was accurate within ~15 metres of my location, at 
+20260306145449.000 (06/03/2026, 14:54:49:00) it had pinpointed the location of the antenna precisely
+to within ~1-2 metres.
+
+Now testing sending coordinates to the server by adding the retrieve_coordinates function:
+
+MPY: soft reboot
+>>> retrieve_coordinates()
+-----------------------------
+
+ AT+CGNSINF
++CGNSINF: 1,1,20260306153011.000,[REDACTED],[REDACTED],[REDACTED],0.00,45.2,2,,0.9,1.1,0.7,,13,12,5,,41,,
+
+OK
+-----------------------------
+-----------------------------
+
+ AT+CIPSEND
+>
+-----------------------------
+-----------------------------
+
+ AT+CGNSINF
++CGNSINF: 1,1,20260306153011.000,[REDACTED],[REDACTED],[REDACTED],0.00,45.2,2,,0.9,1.1,0.7,,13,12,5,,41,,
+
+OK   <----- I don't know what that is so I will investigate that
+
+SEND OK
+-----------------------------
+>>> 
+
+VScode terminal:
+
+PS C:\Users\noahm\Desktop\MVP Web Test> node server.js
+TCP listening on 5000
+HTTP server on 3000
+Pico connected from ::ffff:82.132.246.63
+RAW BUFFER: <Buffer 41 54 2b 43 49 50 53 45 4e 44 0d 0a 74 65 73 74>
+ASCII: "AT+CIPSEND\r\ntest"
+LINE: AT+CIPSEND
+LINE: test
+RAW BUFFER: <Buffer 74 65 73 74 32>
+ASCII: "test2"
+LINE: test2
+RAW BUFFER: <Buffer 41 54 2b 43 47 4e 53 49 4e 46 0d 0d 0a 2b 43 47 4e 53 49 4e 46 3a 20 31 2c 31 2c 32 30 32 36 30 33 30 36 31 35 33 30 31 31 2e 30 30 30 2c 35 30 2e 36 ... 68 more bytes>
+ASCII: "AT+CGNSINF\r\r\n+CGNSINF: 1,1,20260306153011.000,[REDACTED],[REDACTED,[REDACTED],0.00,45.2,2,,0.9,1.1,0.7,,13,12,5,,41,,\r\n\r\nOK"
+LINE: AT+CGNSINF
+LINE: +CGNSINF: 1,1,20260306153011.000,[REDACTED],[REDACTED],[REDACTED],0.00,45.2,2,,0.9,1.1,0.7,,13,12,5,,41,,
+LINE: OK
+
+Both the tcp_send and retrieve_coordinates functions work as intended. The server
+backend code has also been modified to accept transmissions from the new waveshare
+combined module and display the position on a map.
+
+

@@ -1,0 +1,14 @@
+Meeting minutes for client meeting on 05/03/26
+Start 11:18
+End: 11:45
+
+This meeting started with discussing what I had researched including showing Noah’s map mvp and also the options for the login system
+
+If we can’t get the google sign in working then we should contact the 3rd year student as he has done the Azure login so can guide us through that
+
+We don’t need to test the whole system
+Just the core functionality
+
+Sos button is still a priority that we should aim to do straight after core functionality is done
+
+We discussed the new part that will be useful for the sos button
