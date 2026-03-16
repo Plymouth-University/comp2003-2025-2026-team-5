@@ -9,7 +9,7 @@ CREATE TABLE geofence_v1.geofence (
     created_by UNIQUEIDENTIFIER NOT NULL,
 
     CONSTRAINT fk_geofence_patient 
-    FOREIGN KEY (patient_id) REFERENCES geofence_v1.patient(patient_id),
+    FOREIGN KEY (patient_id) REFERENCES geofence_v1.patient(patient_id) ON DELETE NO ACTION,
     CONSTRAINT fk_geofence_creator
-    FOREIGN KEY (created_by) REFERENCES geofence_v1.account(account_id)
+    FOREIGN KEY (created_by) REFERENCES geofence_v1.account(account_id) ON DELETE CASCADE
 );
