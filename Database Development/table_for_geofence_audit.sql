@@ -7,7 +7,7 @@ CREATE TABLE geofence_v1.geofence_audit (
     reason TEXT
 
     CONSTRAINT fk_geofence_geoaudit 
-    FOREIGN KEY (geofence_id) REFERENCES geofence_v1.geofence(geofence_id),
+    FOREIGN KEY (geofence_id) REFERENCES geofence_v1.geofence(geofence_id) ON DELETE NO ACTION,
     CONSTRAINT fk_account_audit
-    FOREIGN KEY (performed_by) REFERENCES geofence_v1.account(account_id)
+    FOREIGN KEY (performed_by) REFERENCES geofence_v1.account(account_id) ON DELETE CASCADE,
 );
