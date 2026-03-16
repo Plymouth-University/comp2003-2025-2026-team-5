@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<script>
+
+function handleCredentialResponse(response) {
+
+    fetch("/website/src/auth/google_login.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            token: response.credential
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if(data.status === "new_user"){
+            window.location.href = "/website/src/choose_role.html"
+        }
+        else{
+            window.location.href = "/website/src/alerts.php"
+        }
+
+    })
+
+}
+
+</script>
+
+</head>
+
+<body>
+
+<div id="g_id_onload"
+     data-client_id="905184472532-eova2mmbpkv4dm75t4q1uom59b8v9h82.apps.googleusercontent.com"
+     data-callback="handleCredentialResponse">
+</div>
+
+<div class="g_id_signin"
+     data-type="standard"
+     data-theme="outline"
+     data-size="large">
+</div>
+
+</body>
+</html>

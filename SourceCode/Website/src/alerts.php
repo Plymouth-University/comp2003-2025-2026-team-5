@@ -1,4 +1,6 @@
-<!--  -->
+<?php
+require_once "auth/session_check.php";
+?>
 <!doctype html>
 <html>
 <head>
@@ -30,7 +32,7 @@
           <!-- Large Screen Navigation -->
           <ul class="hidden space-x-6 lg:flex" id="bignav">
               <li><a href="pairing.html" class="text-lg font-bold hover:text-blue-200">Pairing</a></li>
-              <li><a href="alerts.html" class="text-lg font-bold hover:text-blue-200">Alerts</a></li>
+              <li><a href="alerts.php" class="text-lg font-bold hover:text-blue-200">Alerts</a></li>
               <li><a href="settings.html" class="text-lg font-bold hover:text-blue-200">Settings</a></li>
               <li><a href="geofence.html" class="text-lg font-bold hover:text-blue-200">Set up Geofence</a></li>
           </ul>
@@ -117,7 +119,7 @@
                 ${alert.patientName} ${alert.message}
               </h3>
               <p class="text-gray-800 dark:text-gray-300">${alert.time}</p>
-              <a href="alerts.html?id=${alert.id}"
+              <a href="alerts.php?id=${alert.id}"
                 class="block mt-4 bg-sky-800 hover:bg-sky-700 dark:bg-amber-600 dark:hover:bg-amber-500 text-black dark:text-white px-4 py-2 rounded-full text-lg font-semibold">
                 Learn More
               </a>

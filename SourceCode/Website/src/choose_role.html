@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+        
+
+    <h2>Placeholder Select Account Type</h2>
+
+    <button onclick="createAccount('carer')">Carer</button>
+    <button onclick="createAccount('patient')">Patient</button>
+    <button onclick="createAccount('admin')">Admin</button>
+
+    <script>
+
+    function createAccount(role){
+
+    fetch("/website/src/api/create_account.php", {
+
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+
+    body:JSON.stringify({
+    role:role
+    })
+
+    })
+    .then(res=>res.json())
+    .then(data=>{
+    window.location.href="/website/src/alerts.php"
+    })
+
+    }
+
+    </script>
+</body>
+</html>
