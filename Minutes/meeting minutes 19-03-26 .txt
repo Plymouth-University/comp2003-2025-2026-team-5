@@ -1,0 +1,10 @@
+start: 3:02
+end:
+
+In this client meeting, We discussed our progress and how we are on track to complete the mvp by Wednesday for testing
+
+We showed how the google login system works and discussed nuances with how the database works
+We discussed 
+
+Both patients and cares should be able to remove their link, this removes the ability for the carer to abuse the tracking.
+
