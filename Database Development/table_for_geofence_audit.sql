@@ -1,5 +1,5 @@
 CREATE TABLE geofence_v1.geofence_audit (
-    audit_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NewID(),
+    audit_id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     geofence_id UNIQUEIDENTIFIER,
     action VARCHAR(20),
     performed_by UNIQUEIDENTIFIER,
