@@ -5,7 +5,7 @@ CREATE TABLE geofence_v1.geofence (
     shape_type VARCHAR(20),
     encrypted_payload VARBINARY(MAX) NOT NULL,
     is_active BIT DEFAULT 1,
-    created_at TIMESTAMP NOT NULL,
+    created_at DATETIME DEFAULT GETDATE(),
     created_by UNIQUEIDENTIFIER NOT NULL,
 
     CONSTRAINT fk_geofence_patient 

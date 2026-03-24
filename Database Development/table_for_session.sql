@@ -1,8 +1,8 @@
 CREATE TABLE geofence_v1.session (
     session_id UNIQUEIDENTIFIER PRIMARY KEY,
     account_id UNIQUEIDENTIFIER,
-    issued_at TIMESTAMP NOT NULL,
-    expires_at DATETIME NOT NULL,
+    issued_at DATETIME NOT NULL DEFAULT GETDATE(),
+    expires_at DATETIME NOT NULL DEFAULT GETDATE(),
     revoked BIT DEFAULT 0,
 
     CONSTRAINT fk_account_session 
