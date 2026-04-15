@@ -64,7 +64,7 @@ $isLoggedIn = isset($_SESSION["account_id"]);
                    Logout
                 </a>
             <?php else: ?>
-                <a href="sign_in_page.html"
+                <a href="sign_in_page.php"
                    class="mr-4 text-lg font-bold hover:text-blue-200">
                    Sign In
                 </a>
