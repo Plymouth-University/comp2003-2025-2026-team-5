@@ -2,53 +2,78 @@
 require_once "../auth/session_check.php";
 require_once "../config/db.php";
 
+header("Content-Type: application/json");
+
 $data = json_decode(file_get_contents("php://input"), true);
 
-$lat = $data["lat"];
-$lng = $data["lng"];
-$radius = $data["radius"];
-$patient_id = $data["patient_id"];
+$geofence_id = $data["geofence_id"] ?? null;
+$patient_id = $data["patient_id"] ?? null;
+$lat = $data["lat"] ?? null;
+$lng = $data["lng"] ?? null;
+$radius = $data["radius"] ?? null;
 
-// build payload
+if (!$patient_id || !$lat || !$lng || !$radius) {
+    echo json_encode(["error" => "Missing data"]);
+    exit;
+}
+
+// store as JSON (fine for now)
 $payload = json_encode([
-    "type" => "circle",
-    "center" => [
-        "lat" => $lat,
-        "lng" => $lng
-    ],
+    "lat" => $lat,
+    "lng" => $lng,
     "radius" => $radius
 ]);
 
-// 🔐 simple encryption (for now)
-$key = "your-secret-key-123"; // move to config later
-$encrypted_payload = openssl_encrypt($payload, "AES-128-ECB", $key);
+if ($geofence_id) {
+    // UPDATE EXISTING
+    $stmt = $conn->prepare("
+        UPDATE geofence 
+        SET encrypted_payload=?, patient_id=? 
+        WHERE geofence_id=?
+    ");
+    $stmt->bind_param("sss", $payload, $patient_id, $geofence_id);
+    $stmt->execute();
 
-// generate ID
-$geofence_id = uniqid("geo_", true);
+    // log audit
+    $stmt2 = $conn->prepare("
+    INSERT INTO geofence_audit (geofence_id, action, performed_by)
+    VALUES (?, 'update', ?)
+    ");
+    $stmt2->bind_param("ss", $geofence_id, $_SESSION["account_id"]);
+    $stmt2->execute();
 
-// created_by from session
-$created_by = $_SESSION["account_id"];
+    echo json_encode([
+        "status" => "updated",
+        "geofence_id" => $geofence_id
+    ]);
 
-// insert
-$stmt = $conn->prepare("
-    INSERT INTO geofence 
-    (geofence_id, patient_id, name, shape_type, encrypted_payload, created_by)
-    VALUES (?, ?, ?, ?, ?, ?)
-");
+} else {
+    // CREATE NEW
+    $new_id = "geo_" . uniqid();
 
-$name = "Geofence " . date("Y-m-d H:i:s");
-$shape_type = "circle";
+    $stmt = $conn->prepare("
+        INSERT INTO geofence 
+        (geofence_id, patient_id, name, shape_type, encrypted_payload, created_by)
+        VALUES (?, ?, 'Geofence', 'circle', ?, ?)
+    ");
+    $stmt->bind_param(
+        "ssss",
+        $new_id,
+        $patient_id,
+        $payload,
+        $_SESSION["account_id"]
+    );
+    $stmt->execute();
 
-$stmt->bind_param(
-    "ssssss",
-    $geofence_id,
-    $patient_id,
-    $name,
-    $shape_type,
-    $encrypted_payload,
-    $created_by
-);
+    $stmt2 = $conn->prepare("
+    INSERT INTO geofence_audit (geofence_id, action, performed_by)
+    VALUES (?, 'create', ?)
+    ");
+    $stmt2->bind_param("ss", $new_id, $_SESSION["account_id"]);
+    $stmt2->execute();
 
-$stmt->execute();
-
-echo json_encode(["status" => "success"]);
+    echo json_encode([
+        "status" => "created",
+        "geofence_id" => $new_id
+    ]);
+}
