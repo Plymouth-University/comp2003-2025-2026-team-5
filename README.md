@@ -112,6 +112,8 @@ BEGIN
     VALUES (OLD.geofence_id, 'delete', OLD.created_by);
 END$$
 
+# frontend link (use this to get to the website once XAMPP is running)
+https://localhost/website/src/geofence.php
 
 # This became out of scope after I spent hours and hours trying to make it work and decided that if I get this many bugs setting it up then it will not be feasable to ask others to do so to run this so I reverted the code back to the MySQL XAMPP Method
 as we are now using MSSQL instead of MYSQL, additional steps are required to run the database
