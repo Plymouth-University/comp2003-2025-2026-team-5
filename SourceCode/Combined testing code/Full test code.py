@@ -1,6 +1,6 @@
 #=========IMPORTS=========#
-import machine
-from machine import UART, Pin
+from machine import UART, Pin, SPI, PWM
+import framebuf
 import time
 import utime #figure out a way to write this out later
 
@@ -16,7 +16,9 @@ pwr_en = 14
 
 led = Pin(25, Pin.OUT)
 
-serverIP = "" #obscured for githu upload
+buttonA = Pin(15, Pin.IN, Pin.PULL_UP)
+
+serverIP = "86.8.24.189"
 serverPort = 5000
 
 #=========VARIABLES=========#
@@ -30,9 +32,189 @@ power = False
 #tcp connnection control variable
 connected = False
 
+#toggle variable for SOS button
+emergency = False
+
 #=========CLASSES=========#
 
-#add error handling classes here later
+#color is BGR
+RED = 0x00F8
+GREEN = 0xE007
+BLUE = 0x1F00
+WHITE = 0xFFFF
+BLACK = 0x0000
+class LCD_0inch96(framebuf.FrameBuffer):
+    def __init__(self):
+    
+        self.width = 160
+        self.height = 80
+        
+        self.cs = Pin(9,Pin.OUT)
+        self.rst = Pin(12,Pin.OUT)
+#        self.bl = Pin(13,Pin.OUT)
+        self.cs(1)
+        # pwm = PWM(Pin(13))#BL
+        # pwm.freq(1000)        
+        self.spi = SPI(1)
+        self.spi = SPI(1,1000_000)
+        self.spi = SPI(1,10000_000,polarity=0, phase=0,sck=Pin(10),mosi=Pin(11),miso=None)
+        self.dc = Pin(8,Pin.OUT)
+        self.dc(1)
+        self.buffer = bytearray(self.height * self.width * 2)
+        super().__init__(self.buffer, self.width, self.height, framebuf.RGB565)
+        self.Init()
+        self.SetWindows(0, 0, self.width-1, self.height-1)
+        
+    def reset(self):
+        self.rst(1)
+        time.sleep(0.2) 
+        self.rst(0)
+        time.sleep(0.2)         
+        self.rst(1)
+        time.sleep(0.2) 
+        
+    def write_cmd(self, cmd):
+        self.dc(0)
+        self.cs(0)
+        self.spi.write(bytearray([cmd]))
+
+    def write_data(self, buf):
+        self.dc(1)
+        self.cs(0)
+        self.spi.write(bytearray([buf]))
+        self.cs(1)
+
+    def backlight(self,value):#value:  min:0  max:1000
+        pwm = PWM(Pin(13))#BL
+        pwm.freq(1000)
+        if value>=1000:
+            value=1000
+        data=int (value*65536/1000)       
+        pwm.duty_u16(data)  
+        
+    def Init(self):
+        self.reset() 
+        self.backlight(10000)  
+        
+        self.write_cmd(0x11)
+        time.sleep(0.12)
+        self.write_cmd(0x21) 
+        self.write_cmd(0x21) 
+
+        self.write_cmd(0xB1) 
+        self.write_data(0x05)
+        self.write_data(0x3A)
+        self.write_data(0x3A)
+
+        self.write_cmd(0xB2)
+        self.write_data(0x05)
+        self.write_data(0x3A)
+        self.write_data(0x3A)
+
+        self.write_cmd(0xB3) 
+        self.write_data(0x05)  
+        self.write_data(0x3A)
+        self.write_data(0x3A)
+        self.write_data(0x05)
+        self.write_data(0x3A)
+        self.write_data(0x3A)
+
+        self.write_cmd(0xB4)
+        self.write_data(0x03)
+
+        self.write_cmd(0xC0)
+        self.write_data(0x62)
+        self.write_data(0x02)
+        self.write_data(0x04)
+
+        self.write_cmd(0xC1)
+        self.write_data(0xC0)
+
+        self.write_cmd(0xC2)
+        self.write_data(0x0D)
+        self.write_data(0x00)
+
+        self.write_cmd(0xC3)
+        self.write_data(0x8D)
+        self.write_data(0x6A)   
+
+        self.write_cmd(0xC4)
+        self.write_data(0x8D) 
+        self.write_data(0xEE) 
+
+        self.write_cmd(0xC5)
+        self.write_data(0x0E)    
+
+        self.write_cmd(0xE0)
+        self.write_data(0x10)
+        self.write_data(0x0E)
+        self.write_data(0x02)
+        self.write_data(0x03)
+        self.write_data(0x0E)
+        self.write_data(0x07)
+        self.write_data(0x02)
+        self.write_data(0x07)
+        self.write_data(0x0A)
+        self.write_data(0x12)
+        self.write_data(0x27)
+        self.write_data(0x37)
+        self.write_data(0x00)
+        self.write_data(0x0D)
+        self.write_data(0x0E)
+        self.write_data(0x10)
+
+        self.write_cmd(0xE1)
+        self.write_data(0x10)
+        self.write_data(0x0E)
+        self.write_data(0x03)
+        self.write_data(0x03)
+        self.write_data(0x0F)
+        self.write_data(0x06)
+        self.write_data(0x02)
+        self.write_data(0x08)
+        self.write_data(0x0A)
+        self.write_data(0x13)
+        self.write_data(0x26)
+        self.write_data(0x36)
+        self.write_data(0x00)
+        self.write_data(0x0D)
+        self.write_data(0x0E)
+        self.write_data(0x10)
+
+        self.write_cmd(0x3A) 
+        self.write_data(0x05)
+
+        self.write_cmd(0x36)
+        self.write_data(0xA8)
+
+        self.write_cmd(0x29) 
+        
+    def SetWindows(self, Xstart, Ystart, Xend, Yend):#example max:0,0,159,79
+        Xstart=Xstart+1
+        Xend=Xend+1
+        Ystart=Ystart+26
+        Yend=Yend+26
+        self.write_cmd(0x2A)
+        self.write_data(0x00)              
+        self.write_data(Xstart)      
+        self.write_data(0x00)              
+        self.write_data(Xend) 
+
+        self.write_cmd(0x2B)
+        self.write_data(0x00)
+        self.write_data(Ystart)
+        self.write_data(0x00)
+        self.write_data(Yend)
+
+        self.write_cmd(0x2C) 
+        
+    def display(self):
+    
+        self.SetWindows(0,0,self.width-1,self.height-1)       
+        self.dc(1)
+        self.cs(0)
+        self.spi.write(self.buffer)
+        self.cs(1)
 
 #=========FUNCTIONS=========#
 
@@ -104,7 +286,9 @@ def tcp_open(SERVER_IP, SERVER_PORT):
     sendcmd("AT+CIPMUX=0", 2)
     
     #start TCP connection with server ip and port
-    response = sendcmd(f'AT+CIPSTART="TCP","{SERVER_IP}","{SERVER_PORT}"', 6)
+    cmd = 'AT+CIPSTART="TCP","' + SERVER_IP + '","' + str(SERVER_PORT) + '"'
+    print("Sending:", cmd)
+    response = sendcmd(cmd, 6)
     
     return response
 
@@ -174,6 +358,10 @@ def send_coordinates():
         #decode data and then strip headers
         text = data.decode('utf-8', 'ignore').strip()
         
+        if emergency == True:
+            
+            text = text + '\r\n +EMERGENCY'
+        
     #debug
     #helps to separate data
     print("-----------------------------")
@@ -192,60 +380,110 @@ def send_coordinates():
     
 #=========MAIN LOOP=========#
 
-while run == True:
+if __name__=='__main__':
 
-    #keeps trying to turn the module on until it gets a response
-    while power == False:
-        
-        power_on_off()
-        
-        #reset any carried over connections
-        tcp_close()
-        
-        #send status command
-        response = sendcmd("AT",2)
-        
-        #module alive
-        if "OK" in response:
+    lcd = LCD_0inch96()   
+    lcd.fill(BLACK)   
+    lcd.text("Hello pico!",35,15,GREEN)
+    lcd.text("This is:",50,35,GREEN)    
+    lcd.text("Pico-LCD-0.96",30,55,GREEN)
+    lcd.display()
+    
+    lcd.hline(10,10,140,BLUE)
+    lcd.hline(10,70,140,BLUE)
+    lcd.vline(10,10,60,BLUE)
+    lcd.vline(150,10,60,BLUE)
+    
+    lcd.hline(0,0,160,BLUE)
+    lcd.hline(0,79,160,BLUE)
+    lcd.vline(0,0,80,BLUE)
+    lcd.vline(159,0,80,BLUE) 
+    
+    lcd.display()
+    time.sleep(3) 
+
+
+
+
+    while run == True:
+
+        #keeps trying to turn the module on until it gets a response
+        while power == False:
             
-            #don't repeat
-            power = True
-            
-            sendcmd("AT+CGNSPWR=1", 1)
-        
-        #module not turned on
-        elif "OK" not in response:
-            
-            #try turning on again then loop
             power_on_off()
             
-            #reset connections
+            #reset any carried over connections
             tcp_close()
-    
-    #loop to reattempt connection to server over tcp
-    while connected == False:
-        
-        #store response to tcp open function
-        tcpCheck = tcp_open(serverIP, serverPort)
-    
-        if "CONNECT" in tcpCheck and "OK" in tcpCheck or "ALREADY" in tcpCheck:
             
-            connected = True
+            #send status command
+            response = sendcmd("AT",2)
             
-        elif "CONNECT" not in tcpCheck or "OK" not in tcpCheck:
+            #module alive
+            if "OK" in response:
+                
+                #don't repeat
+                power = True
+                
+                sendcmd("AT+CGNSPWR=1", 1)
             
-            tcp_open(serverIP, serverPort)
-    
-    #loop to send coordinates to the server
-    while connected == True:
+            #module not turned on
+            elif "OK" not in response:
+                
+                #try turning on again then loop
+                power_on_off()
+                
+                #reset connections
+                tcp_close()
         
-        #TODO: add enccyption
+        #loop to reattempt connection to server over tcp
+        while connected == False:
+            
+            #store response to tcp open function
+            tcpCheck = tcp_open(serverIP, serverPort)
         
-        #retrieve and transmit coordinates
-        send_coordinates()
+            if "CONNECT" in tcpCheck and "OK" in tcpCheck or "ALREADY" in tcpCheck:
+                
+                connected = True
+                
+            elif "CONNECT" not in tcpCheck or "OK" not in tcpCheck:
+                
+                tcp_open(serverIP, serverPort)
+                
+                time.sleep(2)
         
-        #sleep for 10 seconds to avoid buffer overflow
-        time.sleep(10)
+        #loop to send coordinates to the server
+        while connected == True:
+            
+            #for loop replaces time.sleep(10) in order to make button responsive outside of send cycles
+            for i in range(100):
+            
+                if buttonA.value() == 0 and emergency == False:
+                
+                    emergency = True
+                    
+                    while buttonA.value() == 0:
+                        
+                        pass
+                    
+                    time.sleep(0.3)
+                
+                elif buttonA.value() == 0 and emergency == True:
+                    
+                    emergency = False
+                    
+                    while buttonA.value() == 0:
+                        
+                        pass
+                    
+                    time.sleep(0.3)
+                
+                time.sleep(0.1)
+            
+            #TODO: add encryption
+            
+            #retrieve and transmit coordinates
+            send_coordinates()
+        
                 
 #=========CODE DUMP=========#
         
