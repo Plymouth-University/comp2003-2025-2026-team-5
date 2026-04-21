@@ -34,14 +34,6 @@ if ($geofence_id) {
     $stmt->bind_param("sss", $payload, $patient_id, $geofence_id);
     $stmt->execute();
 
-    // log audit
-    $stmt2 = $conn->prepare("
-    INSERT INTO geofence_audit (geofence_id, action, performed_by)
-    VALUES (?, 'update', ?)
-    ");
-    $stmt2->bind_param("ss", $geofence_id, $_SESSION["account_id"]);
-    $stmt2->execute();
-
     echo json_encode([
         "status" => "updated",
         "geofence_id" => $geofence_id
@@ -64,13 +56,6 @@ if ($geofence_id) {
         $_SESSION["account_id"]
     );
     $stmt->execute();
-
-    $stmt2 = $conn->prepare("
-    INSERT INTO geofence_audit (geofence_id, action, performed_by)
-    VALUES (?, 'create', ?)
-    ");
-    $stmt2->bind_param("ss", $new_id, $_SESSION["account_id"]);
-    $stmt2->execute();
 
     echo json_encode([
         "status" => "created",

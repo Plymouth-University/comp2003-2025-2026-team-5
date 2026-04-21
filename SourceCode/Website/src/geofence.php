@@ -133,7 +133,7 @@ document.getElementById("patientSelect").addEventListener("change", function () 
 
 function saveGeofence(layer) {
 
-    if (layer.isSaving) return; // 🚫 prevent duplicate calls
+    if (layer.isSaving) return; // prevent duplicate calls
     layer.isSaving = true;
 
     const selectedPatientId = document.getElementById("patientSelect").value;

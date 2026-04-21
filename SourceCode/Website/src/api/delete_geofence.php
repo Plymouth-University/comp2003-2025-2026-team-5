@@ -10,12 +10,4 @@ $stmt = $conn->prepare("DELETE FROM geofence WHERE geofence_id=?");
 $stmt->bind_param("s", $geofence_id);
 $stmt->execute();
 
-// audit log
-$stmt2 = $conn->prepare("
-    INSERT INTO geofence_audit (geofence_id, action, performed_by)
-    VALUES (?, 'delete', ?)
-");
-$stmt2->bind_param("ss", $geofence_id, $_SESSION["account_id"]);
-$stmt2->execute();
-
 echo json_encode(["status"=>"deleted"]);
