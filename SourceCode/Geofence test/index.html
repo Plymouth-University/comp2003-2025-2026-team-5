@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Map</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+  
+  <!--Leaflet-->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <!--Leaflet Draw -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css">
+  <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+
+  <style>
+  
+    #map { height: 500px; }
+  
+  </style>
+
+</head>
+
+  <body>
+
+  <div id="map"></div>
+
+    <script>
+
+      const map = L.map('map').setView([0, 0], 2);
+
+      //openstreetmaps instance
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+      
+      //marker pre-positioning
+      const marker = L.marker([0,0]).addTo(map);
+
+      //update marker position (called by SSE sent from backend)
+      function updatePosition(lat, lon) {
+      
+        marker.setLatLng([lat, lon]);
+        map.panTo([lat, lon]);
+      
+      }
+
+      //SSE stream
+      const source = new EventSource('/events');
+      
+      //retrieve latitude and longitude from SSE data
+      source.onmessage = e => {
+      
+        const [lat, lon] = e.data.split(',').map(Number);
+        
+        //update marker position
+        updatePosition(lat, lon);
+      
+      };
+
+      //feature group for drawn circles
+      const drawnItems = new L.FeatureGroup();
+      map.addLayer(drawnItems);
+
+      //draw control only allows circle
+      const drawControl = new L.Control.Draw({
+      
+        draw: {
+      
+          polygon: false,
+          polyline: false,
+          rectangle: false,
+          marker: false,
+          circlemarker: false,
+          circle: true
+      
+        },
+        
+        //only edit items which have already been drawn
+        edit: {
+      
+          featureGroup: drawnItems
+      
+        }
+      
+      });
+
+      //add draw control
+      map.addControl(drawControl);
+
+      //update server circle definitions
+      function sendCircle(layer) {
+        
+        //retrieve circle details
+        const center = layer.getLatLng();
+        const radius = layer.getRadius();
+        const bounds = layer.getBounds();
+        
+        //retrieve circles from server
+        fetch('/circle', {
+          
+          //send new definition to backend as json
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+      
+            center: { lat: center.lat, lon: center.lng },
+            radius: radius,
+            bounds: {
+              
+              north: bounds.getNorth(),
+              south: bounds.getSouth(),
+              east: bounds.getEast(),
+              west: bounds.getWest()
+      
+            }
+      
+          })
+      
+        });
+      
+      }
+
+      //make sure only one circle can exist at a time
+      map.on(L.Draw.Event.CREATED, function (e) {
+      
+        drawnItems.clearLayers(); //automatically clear previous circles
+        const layer = e.layer;
+        drawnItems.addLayer(layer); //add new circle
+        sendCircle(layer); //update circle definition
+      
+      });
+
+      //when user edits existing circle
+      map.on(L.Draw.Event.EDITED, function (e) {
+      
+        e.layers.eachLayer(layer => {
+          
+          sendCircle(layer);
+        
+        });
+      
+      });
+
+    </script>
+  </body>
+</html>

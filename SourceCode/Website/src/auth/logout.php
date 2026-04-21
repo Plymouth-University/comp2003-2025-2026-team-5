@@ -4,4 +4,4 @@ session_start();
 
 session_destroy();
 
-header("Location: /geofence/pages/sign_in_page.html");
+header("Location: /website/src/sign_in_page.php");

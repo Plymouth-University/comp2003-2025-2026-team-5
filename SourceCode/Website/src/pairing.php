@@ -28,6 +28,10 @@ requireRole(["carer"]);
 
     <?php include "components/navbar.php"; ?>
     
-    <main id="app"></main>
+    <main id="app">
+        <p class="text-2xl">
+            This will be the page where the Patient and Carer link thier accounts so that the carer can see when the user breaks the geofence.
+        </p>
+    </main>
 </body>
 </html>

@@ -3,9 +3,11 @@ CREATE TABLE geofence_v1.geofence (
     patient_id UNIQUEIDENTIFIER NOT NULL,
     name VARCHAR(100),
     shape_type VARCHAR(20),
+    latitude DECIMAL(10, 6) NOT NULL,
+    longitude DECIMAL(10, 6) NOT NULL,
     encrypted_payload VARBINARY(MAX) NOT NULL,
     is_active BIT DEFAULT 1,
-    created_at TIMESTAMP NOT NULL,
+    created_at DATETIME DEFAULT GETDATE(),
     created_by UNIQUEIDENTIFIER NOT NULL,
 
     CONSTRAINT fk_geofence_patient 

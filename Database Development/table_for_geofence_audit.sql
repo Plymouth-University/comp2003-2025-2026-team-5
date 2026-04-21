@@ -3,7 +3,7 @@ CREATE TABLE geofence_v1.geofence_audit (
     geofence_id UNIQUEIDENTIFIER,
     action VARCHAR(20),
     performed_by UNIQUEIDENTIFIER,
-    performed_at TIMESTAMP NOT NULL,
+    performed_at DATETIME DEFAULT GETDATE(),
     reason TEXT
 
     CONSTRAINT fk_geofence_geoaudit 
