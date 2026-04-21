@@ -115,7 +115,8 @@ END$$
 # frontend link (use this to get to the website once XAMPP is running)
 https://localhost/website/src/geofence.php
 
-# This became out of scope after I spent hours and hours trying to make it work and decided that if I get this many bugs setting it up then it will not be feasable to ask others to do so to run this so I reverted the code back to the MySQL XAMPP Method
+# Redundant section, please ignore
+This became out of scope after I spent hours and hours trying to make it work and decided that if I get this many bugs setting it up then it will not be feasable to ask others to do so to run this so I reverted the code back to the MySQL XAMPP Method
 as we are now using MSSQL instead of MYSQL, additional steps are required to run the database
 download Microsoft SQL server express, SQL server management studio and microsoft drivers for PHP for SQL Server
 Edit the php.ini file in your xampp installation to include these lines : 
