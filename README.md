@@ -88,6 +88,7 @@ CREATE TABLE broken_geofences (
 );
 
 # Database triggers
+DELIMITER $$
 CREATE TRIGGER geofence_insert
 AFTER INSERT ON geofence
 FOR EACH ROW
@@ -95,7 +96,9 @@ BEGIN
     INSERT INTO geofence_audit (geofence_id, action, performed_by)
     VALUES (NEW.geofence_id, 'create', NEW.created_by);
 END$$
+DELIMITER ;
 
+DELIMITER $$
 CREATE TRIGGER geofence_update
 AFTER UPDATE ON geofence
 FOR EACH ROW
@@ -103,7 +106,10 @@ BEGIN
     INSERT INTO geofence_audit (geofence_id, action, performed_by)
     VALUES (NEW.geofence_id, 'update', NEW.created_by);
 END$$
+DELIMITER ;
 
+
+DELIMITER $$
 CREATE TRIGGER geofence_delete
 AFTER DELETE ON geofence
 FOR EACH ROW
@@ -111,6 +117,7 @@ BEGIN
     INSERT INTO geofence_audit (geofence_id, action, performed_by)
     VALUES (OLD.geofence_id, 'delete', OLD.created_by);
 END$$
+DELIMITER ;
 
 # frontend link (use this to get to the website once XAMPP is running)
 https://localhost/website/src/geofence.php
