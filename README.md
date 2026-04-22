@@ -11,7 +11,8 @@ Turn on MySQL on the xampp control panel then go to https://localhost/phpmyadmin
 CREATE DATABASE geofence;
 USE geofence;
 
--- ---------------- ACCOUNT ----------------
+---------------- ACCOUNT ----------------
+
 CREATE TABLE account (
     account_id VARCHAR(50) PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -20,7 +21,8 @@ CREATE TABLE account (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- ---------------- PATIENT ----------------
+---------------- PATIENT ----------------
+
 CREATE TABLE patient (
     patient_id VARCHAR(50) PRIMARY KEY,
     account_id VARCHAR(50) NOT NULL,
@@ -29,7 +31,8 @@ CREATE TABLE patient (
     FOREIGN KEY (account_id) REFERENCES account(account_id) ON DELETE CASCADE
 );
 
--- ---------------- CARER ----------------
+---------------- CARER ----------------
+
 CREATE TABLE carer (
     carer_id VARCHAR(50) PRIMARY KEY,
     account_id VARCHAR(50) NOT NULL,
@@ -38,7 +41,8 @@ CREATE TABLE carer (
     FOREIGN KEY (account_id) REFERENCES account(account_id) ON DELETE CASCADE
 );
 
--- ---------------- CARER ↔ PATIENT ----------------
+---------------- CARER ↔ PATIENT ----------------
+
 CREATE TABLE carer_patient (
     id INT AUTO_INCREMENT PRIMARY KEY,
     carer_id VARCHAR(50),
@@ -48,7 +52,8 @@ CREATE TABLE carer_patient (
     FOREIGN KEY (patient_id) REFERENCES patient(patient_id) ON DELETE CASCADE
 );
 
--- ---------------- GEOFENCE ----------------
+---------------- GEOFENCE ----------------
+
 CREATE TABLE geofence (
     geofence_id VARCHAR(50) PRIMARY KEY,
     patient_id VARCHAR(50) NOT NULL,
@@ -63,7 +68,8 @@ CREATE TABLE geofence (
     FOREIGN KEY (created_by) REFERENCES account(account_id) ON DELETE CASCADE
 );
 
--- ---------------- GEOFENCE AUDIT ----------------
+---------------- GEOFENCE AUDIT ----------------
+
 CREATE TABLE geofence_audit (
     audit_id INT AUTO_INCREMENT PRIMARY KEY,
     geofence_id VARCHAR(50),
@@ -75,7 +81,8 @@ CREATE TABLE geofence_audit (
     FOREIGN KEY (performed_by) REFERENCES account(account_id) ON DELETE CASCADE
 );
 
--- ---------------- BROKEN GEOFENCES ----------------
+---------------- BROKEN GEOFENCES ----------------
+
 CREATE TABLE broken_geofences (
     broken_geofence_id INT AUTO_INCREMENT PRIMARY KEY,
     patient_id VARCHAR(50),
