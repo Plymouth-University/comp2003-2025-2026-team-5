@@ -7,6 +7,8 @@ const HTTP_PORT = 3000;
 
 let clients = [];
 
+
+
 //converts NMEA string to decimal
 function nmeaToDecimal(coord, dir) {
 
