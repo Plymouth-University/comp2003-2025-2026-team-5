@@ -50,7 +50,7 @@ CREATE TABLE carer_patient (
 
 -- ---------------- GEOFENCE ----------------
 CREATE TABLE geofence (
-    geofence_id INT AUTO_INCREMENT PRIMARY KEY,
+    geofence_id VARCHAR(50) PRIMARY KEY,
     patient_id VARCHAR(50) NOT NULL,
     name VARCHAR(100),
     shape_type VARCHAR(20),
