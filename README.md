@@ -77,7 +77,7 @@ CREATE TABLE geofence_audit (
 
 -- ---------------- BROKEN GEOFENCES ----------------
 CREATE TABLE broken_geofences (
-    broken_geofence_id VARCHAR(50) PRIMARY KEY,
+    broken_geofence_id INT AUTO_INCREMENT PRIMARY KEY,
     patient_id VARCHAR(50),
     latitude DECIMAL(10,6),
     longitude DECIMAL(10,6),
