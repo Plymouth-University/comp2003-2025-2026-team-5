@@ -40,10 +40,9 @@ CREATE TABLE carer (
 
 -- ---------------- CARER ↔ PATIENT ----------------
 CREATE TABLE carer_patient (
+    id INT AUTO_INCREMENT PRIMARY KEY,
     carer_id VARCHAR(50),
     patient_id VARCHAR(50),
-
-    PRIMARY KEY (carer_id, patient_id),
 
     FOREIGN KEY (carer_id) REFERENCES carer(carer_id) ON DELETE CASCADE,
     FOREIGN KEY (patient_id) REFERENCES patient(patient_id) ON DELETE CASCADE
@@ -51,7 +50,7 @@ CREATE TABLE carer_patient (
 
 -- ---------------- GEOFENCE ----------------
 CREATE TABLE geofence (
-    geofence_id VARCHAR(50) PRIMARY KEY,
+    geofence_id INT AUTO_INCREMENT PRIMARY KEY,
     patient_id VARCHAR(50) NOT NULL,
     name VARCHAR(100),
     shape_type VARCHAR(20),
