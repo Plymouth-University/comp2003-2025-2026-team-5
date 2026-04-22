@@ -41,7 +41,7 @@
               window.location.href = "/website/src/choose_role.html"
           }
           else{
-              window.location.href = "/website/src/alerts.php"
+              window.location.href = "/website/src/pairing.php"
           }
 
       });

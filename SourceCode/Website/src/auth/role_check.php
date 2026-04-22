@@ -33,7 +33,7 @@ function requireRole($allowed_roles){
     if(!isset($_SESSION["role"]) || !in_array($_SESSION["role"], $allowed_roles)){
 
         include "components/navbar.php";
-        echo '<p class="text-2xl">Your role does not grant access to this feature</p>';
+        echo '<p class="text-2xl mb-3 text-black dark:text-white">Your role does not grant access to this feature</p>';
         exit();
     }
 }
