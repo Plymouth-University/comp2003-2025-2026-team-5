@@ -9,8 +9,5 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
-  "dependencies": {
-    "mysql2": "^3.22.2"
-  }
+  "type": "commonjs"
 }
