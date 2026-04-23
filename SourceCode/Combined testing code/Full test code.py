@@ -3,6 +3,9 @@ from machine import UART, Pin, SPI, PWM
 import framebuf
 import time
 import utime #figure out a way to write this out later
+import json
+from cryptography import gen_ecdh, encrypt_message, curve
+from utinyec.ec import Point
 
 time.sleep(5)
 
@@ -20,6 +23,7 @@ buttonA = Pin(15, Pin.IN, Pin.PULL_UP)
 
 serverIP = "86.8.24.189"
 serverPort = 5000
+DeviceID = "patient-1"
 
 #=========VARIABLES=========#
 
@@ -35,7 +39,14 @@ connected = False
 #toggle variable for SOS button
 emergency = False
 
+device_priv = None
+device_pub = None
+server_pub = None
+
+
 #=========CLASSES=========#
+
+#taken from official waveshare code, will be changed later
 
 #color is BGR
 RED = 0x00F8
@@ -43,6 +54,7 @@ GREEN = 0xE007
 BLUE = 0x1F00
 WHITE = 0xFFFF
 BLACK = 0x0000
+
 class LCD_0inch96(framebuf.FrameBuffer):
     def __init__(self):
     
@@ -358,6 +370,9 @@ def send_coordinates():
         #decode data and then strip headers
         text = data.decode('utf-8', 'ignore').strip()
         
+        #send device ID as well
+        text = text + '\r\n +DEVICEID: ' + DeviceID
+        
         if emergency == True:
             
             text = text + '\r\n +EMERGENCY'
@@ -384,9 +399,9 @@ if __name__=='__main__':
 
     lcd = LCD_0inch96()   
     lcd.fill(BLACK)   
-    lcd.text("Hello pico!",35,15,GREEN)
-    lcd.text("This is:",50,35,GREEN)    
-    lcd.text("Pico-LCD-0.96",30,55,GREEN)
+    lcd.text("Emergency button -->",35,15,GREEN)
+    lcd.text("",50,35,GREEN)    
+    lcd.text("Unused button -->",30,55,GREEN)
     lcd.display()
     
     lcd.hline(10,10,140,BLUE)
@@ -512,4 +527,5 @@ def send_message(number, message):
     
     
     
+
 
