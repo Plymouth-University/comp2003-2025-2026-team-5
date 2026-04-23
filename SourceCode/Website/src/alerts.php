@@ -106,6 +106,7 @@ else {
   .then(res => res.json())
   .then(alerts => {
 
+    const id = parseInt(params.get("id"), 10);
     const thisAlert = alerts.find(a => a.broken_geofence_id === id);
 
     if (!thisAlert){

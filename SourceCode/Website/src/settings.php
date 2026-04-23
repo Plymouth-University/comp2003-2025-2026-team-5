@@ -60,6 +60,9 @@
             </button>
         </div>
         <hr class="m-8 border-2 border-black dark:border-white">
+        <p class="p-4 text-3xl text-black dark:text-white">Cookie policy</p>
+        <p class="p-4 text-xl text-black dark:text-white">This Proof of concept website only uses necessary cookies to enable the core features of the project, the website will not function without them.</p>
+        
     </div>
     
     <script>
