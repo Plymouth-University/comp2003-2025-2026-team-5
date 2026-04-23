@@ -1,12 +1,48 @@
 const net = require('net');
 const http = require('http');
 const fs = require('fs');
+const pool = require('./db.js');
 
 const TCP_PORT = 5000;
 const HTTP_PORT = 3000;
 
 let clients = [];
 let circle = null; //only one circle can exist
+let currentDeviceId = null;
+
+// geofence logic
+async function isInsideGeofence(currentdeviceid, lat, lon) {
+  const device_query = 'SELECT * FROM `device` WHERE `device_id` = ?';
+  const id = currentdeviceid;
+  const geofence_query = 'SELECT * FROM `geofence` where `patient_id` = ?';
+  const broken_geofence = 'INSERT INTO `broken_geofences`(patient_id, latitude, longitude) VALUES (?, ?, ?)';
+  try {
+    const [device_rows] = await pool.query(device_query, [id]);
+    if (!device_rows.length) {
+      console.error("Device not found");
+      return;
+    }
+    const patient_id = device_rows[0].patient_id;
+
+     const broken_geo_values = [patient_id, lat, lon];
+
+    const [geofence_rows] = await pool.query(geofence_query, [patient_id]);
+    if (!geofence_rows.length) {
+      console.error("Geofences not found for patient");
+      return;
+  }  else {
+      for (const geofence of geofence_rows) {
+        const d = haversine(lat, lon, geofence.center_lat, geofence.center_lon);
+        if (d > geofence.radius) {
+          console.log("Device is outside geofence:", geofence.id);
+          await pool.query(broken_geofence, broken_geo_values);
+        };
+  }
+}
+  } catch (err) {
+    console.error("Database error:", err);
+  }
+}
 
 //haversine formula
 function haversine(lat1, lon1, lat2, lon2) {
@@ -67,7 +103,7 @@ function checkGeofence(lat, lon) {
 }
 
 //parses CGNSINF sentences
-function parseCGNSINF(sentence) {
+function parseCGNSINF(sentence, deviceid) {
 
   sentence = sentence.replace('+CGNSINF:', '');
 
@@ -90,8 +126,10 @@ function parseCGNSINF(sentence) {
   }
 
   //server sent events handling
-  const data = `data:${lat},${lon}\n\n`;
-  clients.forEach(res => res.write(data));
+  /* const data = `data:${lat},${lon}\n\n`;
+  clients.forEach(res => res.write(data)); */
+
+  isInsideGeofence(deviceid, lat, lon)
 
 }
 
@@ -116,9 +154,13 @@ net.createServer(socket => {
 
       console.log('LINE:', line);
 
+      if (line.startsWith('+DEVICEID:')) {
+        currentDeviceId = line.replace('+DEVICEID:', '').trim();
+    }
+
       if (line.startsWith('+CGNSINF:')) {
       
-        parseCGNSINF(line);
+        parseCGNSINF(line, currentDeviceId);
       
       }
 
@@ -225,4 +267,3 @@ http.createServer((req, res) => {
   console.log(`HTTP server on ${HTTP_PORT}`)
 
 );
-
