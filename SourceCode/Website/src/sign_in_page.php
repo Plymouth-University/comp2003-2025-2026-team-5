@@ -9,7 +9,7 @@
   <!-- Google Sign-In -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-  <!-- Dark mode (same as alerts.php) -->
+  <!-- Dark mode -->
   <script>
     if (
         localStorage.theme === "dark" ||
