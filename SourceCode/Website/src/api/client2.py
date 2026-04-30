@@ -6,7 +6,7 @@ import time
 HOST = "127.0.0.1"
 PORT = 5000
 
-DeviceID = 1
+DeviceID = "550e8400-e29b-41d4-a716-446655440000"
 
 cgnsinf_sentences = [
     
