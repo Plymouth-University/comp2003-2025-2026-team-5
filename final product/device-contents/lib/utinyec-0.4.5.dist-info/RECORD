@@ -1,0 +1,8 @@
+utinyec-0.4.5.dist-info/METADATA,,
+utinyec/__init__.py,,
+utinyec/cryptography.py,,
+utinyec/cryptography_no_dependencies.py,,
+utinyec/ec.py,,
+utinyec/registry.py,,
+utinyec/uVIPER_cryptography.py,,
+utinyec-0.4.5.dist-info/RECORD,,
