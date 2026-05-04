@@ -24,21 +24,21 @@ async function isInsideGeofence(currentdeviceid, lat, lon) {
     }
     const patient_id = device_rows[0].patient_id;
 
-     const broken_geo_values = [patient_id, lat, lon];
+    const broken_geo_values = [patient_id, lat, lon];
 
     const [geofence_rows] = await pool.query(geofence_query, [patient_id]);
     if (!geofence_rows.length) {
       console.error("Geofences not found for patient");
       return;
-  }  else {
-      for (const geofence of geofence_rows) {
-        const d = haversine(lat, lon, geofence.center_lat, geofence.center_lon);
-        if (d > geofence.radius) {
-          console.log("Device is outside geofence:", geofence.id);
-          await pool.query(broken_geofence, broken_geo_values);
-        };
-  }
-}
+    }  else {
+        for (const geofence of geofence_rows){
+          const d = haversine(lat, lon, geofence.center_lat, geofence.center_lon);
+          if (d > geofence.radius) {
+            console.log("Device is outside geofence:", geofence.id);
+            await pool.query(broken_geofence, broken_geo_values);
+          };
+        }
+      }
   } catch (err) {
     console.error("Database error:", err);
   }
