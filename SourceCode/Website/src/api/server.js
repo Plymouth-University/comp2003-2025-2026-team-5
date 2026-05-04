@@ -8,15 +8,15 @@ const HTTP_PORT = 3000;
 
 let clients = [];
 let circle = null; //only one circle can exist
-let currentDeviceId = null;
+let currentDeviceId = 1;
 
 // geofence logic
 async function isInsideGeofence(currentdeviceid, lat, lon) {
   const device_query = 'SELECT * FROM `device` WHERE `device_id` = ?';
   const id = currentdeviceid;
   const geofence_query = 'SELECT * FROM `geofence` where `patient_id` = ?';
-  const broken_geofence = 'INSERT INTO `broken_geofences`(patient_id, latitude, longitude) VALUES (?, ?, ?)';
-  try {
+  const broken_geofence = 'INSERT IGNORE INTO `broken_geofences`(patient_id, latitude, longitude) VALUES (?, ?, ?)';
+  try { 
     const [device_rows] = await pool.query(device_query, [id]);
     if (!device_rows.length) {
       console.error("Device not found");
@@ -32,10 +32,12 @@ async function isInsideGeofence(currentdeviceid, lat, lon) {
       return;
   }  else {
       for (const geofence of geofence_rows) {
-        const d = haversine(lat, lon, geofence.center_lat, geofence.center_lon);
+        const d = haversine(lat, lon, geofence.latitude, geofence.longitude);
+        console.log("Distance:", d, "Radius:", geofence.radius);
         if (d > geofence.radius) {
-          console.log("Device is outside geofence:", geofence.id);
+          console.log("Device is outside geofence:", geofence.geofence_id);
           await pool.query(broken_geofence, broken_geo_values);
+          break; 
         };
   }
 }
@@ -43,6 +45,77 @@ async function isInsideGeofence(currentdeviceid, lat, lon) {
     console.error("Database error:", err);
   }
 }
+
+
+// Function to check if device even exists in the database
+async function doesDeviceExist(deviceid) {
+  // Query to see if table has data
+  const exists_query = 'SELECT * FROM  `device`';
+
+  // Query to check if device exists within database
+  const query = 'SELECT * FROM `device` WHERE `device_id` = ?';
+  const id = deviceid;
+  try {
+
+    const [exists_rows] = await pool.query(exists_query);
+
+    if (!exists_rows.length) {
+      console.error("Device table does not have data");
+      return false;
+    } else {
+      console.log("Device table has data");
+    }
+
+    const [device_rows] = await pool.query(query, [id]);
+
+    if (!device_rows.length) {
+      console.error("Device not found");
+      return false;
+    } else {
+      console.log("Device found");
+      return device_rows.length > 0;
+    }
+  } catch (err) {
+    console.error("Database error:", err);
+    return false;
+  }
+}
+
+// Function to retrieve geofence from database
+async function retrieveGeofence(deviceid) {
+  const device_query = 'SELECT * FROM `device` WHERE `device_id` = ?';
+  const device_query_values = [deviceid];
+  const get_patient_id_query = 'SELECT patient_id FROM `device` WHERE `device_id` = ?';
+  const geofence_query = 'SELECT * FROM `geofence` where `patient_id` = ?';
+
+  try {
+    const [device_rows] = await pool.query(device_query, device_query_values);
+    if (!device_rows.length) {
+      console.error("Device not found");
+      return null;
+    }
+
+    const patient_id = await pool.query(get_patient_id_query, device_query_values);
+
+    const [geofence_rows] = await pool.query(geofence_query, patient_id);
+
+    if (!geofence_rows.length) {
+      console.error("Geofences not found for patient");
+      return null;
+    }
+
+    geofence_lat = geofence_rows[0].latitude;
+    geofence_lon = geofence_rows[0].longitude;
+    geofence_radius = geofence_rows[0].radius;
+    geofence_shape = geofence_rows[0].shape;
+
+    return { lat: geofence_lat, lon: geofence_lon, radius: geofence_radius, shape: geofence_shape };
+  } catch (err) {
+    console.error("Database error:", err);
+    return null;
+  }
+}
+
 
 //haversine formula
 function haversine(lat1, lon1, lat2, lon2) {
@@ -103,7 +176,13 @@ function checkGeofence(lat, lon) {
 }
 
 //parses CGNSINF sentences
-function parseCGNSINF(sentence, deviceid) {
+async function parseCGNSINF(sentence, deviceid) {
+
+  /* if (!await doesDeviceExist(deviceid)) {
+
+    console.error("Device does not exist, skipping CGNSINF parsing");
+    return; 
+  } */
 
   sentence = sentence.replace('+CGNSINF:', '');
 
@@ -129,7 +208,7 @@ function parseCGNSINF(sentence, deviceid) {
   /* const data = `data:${lat},${lon}\n\n`;
   clients.forEach(res => res.write(data)); */
 
-  isInsideGeofence(deviceid, lat, lon)
+  await isInsideGeofence(deviceid, lat, lon);
 
 }
 
@@ -267,3 +346,5 @@ http.createServer((req, res) => {
   console.log(`HTTP server on ${HTTP_PORT}`)
 
 );
+
+module.exports = haversine
